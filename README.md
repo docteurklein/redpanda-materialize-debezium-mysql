@@ -29,5 +29,5 @@ dce -T mysql mysql -uroot -proot pim_1 << 'SQL'
     where id = 1
 SQL
 
-dce redpanda rpk topic consume all_pim_product_value_edited-u86-1645886269-3404399017739659119
+dce redpanda rpk topic consume all_pim_product_value_edited
 ```
