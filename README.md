@@ -22,4 +22,12 @@ curl --request POST --url http://localhost:8083/connectors --header 'Content-Typ
 }'|jq
 
 dcr mzcli < sql/materialize.sql
+
+dce -T mysql mysql -uroot -proot pim_1 << 'SQL'
+    update pim_catalog_product set raw_values =
+    json_set(raw_values, '$.name."<all_channels>"."<all_locales>"', 'NEW NAME')
+    where id = 1
+SQL
+
+dce redpanda rpk topic consume all_pim_product_value_edited-u86-1645886269-3404399017739659119
 ```
