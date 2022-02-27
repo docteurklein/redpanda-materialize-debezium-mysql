@@ -24,22 +24,22 @@ create source pim_2.catalog_product
 ;
 
 create materialized view all_pim.product as
-  select * from pim_1.catalog_product
-  union select * from pim_2.catalog_product
+  select 'pim_1' pim, * from pim_1.catalog_product
+  union select 'pim_2' pim, * from pim_2.catalog_product
 ;
 
 create materialized view all_pim.product_value as
-  with by_attr (product_id, code, rest) as (
-    select id, j.* from all_pim.product, jsonb_each(raw_values) j
+  with by_attr (pim, product_id, code, rest) as (
+    select pim, id, j.* from all_pim.product, jsonb_each(raw_values) j
   ),
-  by_channel (product_id, code, channel, rest) as (
-    select product_id, code,
+  by_channel (pim, product_id, code, channel, rest) as (
+    select pim, product_id, code,
         case j.key when '<all_channels>' then null else j.key end,
         j.value
     from by_attr, jsonb_each(rest) j
   ),
-  by_locale (product_id, code, channel, locale, value) as (
-    select product_id, code, channel,
+  by_locale (pim, product_id, code, channel, locale, value) as (
+    select pim, product_id, code, channel,
         case j.key when '<all_locales>' then null else j.key end,
         j.value
     from by_channel, jsonb_each_text(rest) j
